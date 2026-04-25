@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: recipe-book-postgres
+    environment:
+      POSTGRES_DB: recipe_book
+      POSTGRES_USER: recipe_user
+      POSTGRES_PASSWORD: recipe_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - recipe_book_pgdata:/var/lib/postgresql/data
+
+volumes:
+  recipe_book_pgdata:

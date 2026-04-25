@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: recipe-book-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/checkpoint2_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  upload-dir: uploads/photos
