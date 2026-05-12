@@ -1,4 +1,4 @@
-package com.example.recipebook.service;
+package com.example.recipebook.service.unit_tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,6 +10,7 @@ import com.example.recipebook.domain.enums.DietFlag;
 import com.example.recipebook.domain.enums.ProductCategory;
 import com.example.recipebook.dto.DishIngredientRequest;
 import com.example.recipebook.exception.BusinessRuleException;
+import com.example.recipebook.service.NutritionCalculator;
 import com.example.recipebook.service.impl.NutritionCalculatorImpl;
 import java.math.BigDecimal;
 import java.util.List;
@@ -47,7 +48,7 @@ class NutritionCalculatorEquivalencePartitioningTest {
     @DisplayName("Valid equivalence classes")
     class ValidEquivalenceClasses {
         @ParameterizedTest(name = "{0}")
-        @MethodSource("com.example.recipebook.service.NutritionCalculatorEquivalencePartitioningTest#validCalculationCases")
+        @MethodSource("com.example.recipebook.service.unit_tests.NutritionCalculatorEquivalencePartitioningTest#validCalculationCases")
         @DisplayName("calculates nutrition for valid dish compositions")
         void calculatesNutritionForValidDishCompositions(String caseName,
                                                          List<DishIngredientRequest> ingredients,

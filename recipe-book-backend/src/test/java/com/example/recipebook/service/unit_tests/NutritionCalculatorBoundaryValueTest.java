@@ -1,4 +1,4 @@
-package com.example.recipebook.service;
+package com.example.recipebook.service.unit_tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,6 +8,7 @@ import com.example.recipebook.domain.enums.CookingRequirement;
 import com.example.recipebook.domain.enums.DietFlag;
 import com.example.recipebook.domain.enums.ProductCategory;
 import com.example.recipebook.dto.DishIngredientRequest;
+import com.example.recipebook.service.NutritionCalculator;
 import com.example.recipebook.service.impl.NutritionCalculatorImpl;
 import java.math.BigDecimal;
 import java.util.List;
