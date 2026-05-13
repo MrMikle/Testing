@@ -311,15 +311,19 @@ class ProductApiTest extends ApiTestBase {
         return Stream.of(
                 Arguments.of("minimum valid name length", TestDataFactory.productWithName("Аб")),
                 Arguments.of("zero calories boundary", TestDataFactory.productWithCalories("0")),
-                Arguments.of("positive calories near boundary", TestDataFactory.productWithCalories("1")),
+                Arguments.of("positive calories near boundary", TestDataFactory.productWithCalories("0.01")),
                 Arguments.of("zero proteins boundary", TestDataFactory.productWithProteins("0")),
+                Arguments.of("positive proteins near boundary", TestDataFactory.productWithProteins("0.01")),
                 Arguments.of("maximum proteins boundary", TestDataFactory.productWithProteins("100")),
                 Arguments.of("zero fats boundary", TestDataFactory.productWithFats("0")),
+                Arguments.of("positive fats near boundary", TestDataFactory.productWithFats("0.01")),
                 Arguments.of("maximum fats boundary", TestDataFactory.productWithFats("100")),
                 Arguments.of("zero carbohydrates boundary", TestDataFactory.productWithCarbohydrates("0")),
+                Arguments.of("positive carbohydrates near boundary", TestDataFactory.productWithCarbohydrates("0.01")),
                 Arguments.of("maximum carbohydrates boundary", TestDataFactory.productWithCarbohydrates("100")),
                 Arguments.of("BJU sum exactly 100 boundary", TestDataFactory.productWithNutrition("60", "30", "10")),
                 Arguments.of("zero photos boundary", TestDataFactory.productWithPhotoCount(0)),
+                Arguments.of("photos near boundary", TestDataFactory.productWithPhotoCount(1)),
                 Arguments.of("maximum photos boundary", TestDataFactory.productWithPhotoCount(5))
         );
     }
@@ -328,12 +332,12 @@ class ProductApiTest extends ApiTestBase {
         return Stream.of(
                 Arguments.of("blank product name", TestDataFactory.productWithName("")),
                 Arguments.of("one-character product name below minimum", TestDataFactory.productWithName("А")),
-                Arguments.of("negative calories below minimum", TestDataFactory.productWithCalories("-1")),
-                Arguments.of("negative proteins below minimum", TestDataFactory.productWithProteins("-1")),
-                Arguments.of("proteins above maximum", TestDataFactory.productWithProteins("100.1")),
-                Arguments.of("negative fats below minimum", TestDataFactory.productWithFats("-1")),
-                Arguments.of("fats above maximum", TestDataFactory.productWithFats("100.1")),
-                Arguments.of("negative carbohydrates below minimum", TestDataFactory.productWithCarbohydrates("-1")),
+                Arguments.of("negative calories below minimum", TestDataFactory.productWithCalories("-0.01")),
+                Arguments.of("negative proteins below minimum", TestDataFactory.productWithProteins("-0.01")),
+                Arguments.of("proteins above maximum", TestDataFactory.productWithProteins("100.01")),
+                Arguments.of("negative fats below minimum", TestDataFactory.productWithFats("-0.01")),
+                Arguments.of("fats above maximum", TestDataFactory.productWithFats("100.01")),
+                Arguments.of("negative carbohydrates below minimum", TestDataFactory.productWithCarbohydrates("-0.01")),
                 Arguments.of("carbohydrates above maximum", TestDataFactory.productWithCarbohydrates("100.1")),
                 Arguments.of("BJU sum above 100 boundary", TestDataFactory.productWithNutrition("60", "30", "20.1")),
                 Arguments.of("photo count above maximum", TestDataFactory.productWithPhotoCount(6))

@@ -182,21 +182,6 @@ final class TestDataFactory {
         );
     }
 
-    static ProductRequest productWithCategoryAndFlags(ProductCategory category, Set<DietFlag> flags) {
-        return product(
-                "Продукт с флагами",
-                List.of(),
-                "10",
-                "1",
-                "1",
-                "1",
-                null,
-                category,
-                CookingRequirement.READY_TO_EAT,
-                flags
-        );
-    }
-
     static ProductRequest meatWithVeganFlag() {
         return product(
                 "Мясо веганское",
@@ -349,21 +334,6 @@ final class TestDataFactory {
                 List.of(ingredient(productId, "100")),
                 "100",
                 DishCategory.SNACK,
-                Set.of()
-        );
-    }
-
-    static DishRequest dishWithCategory(Long productId, String name, DishCategory category) {
-        return dish(
-                name,
-                List.of(),
-                null,
-                null,
-                null,
-                null,
-                List.of(ingredient(productId, "100")),
-                "100",
-                category,
                 Set.of()
         );
     }

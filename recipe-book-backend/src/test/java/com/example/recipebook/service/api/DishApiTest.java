@@ -325,6 +325,10 @@ class DishApiTest extends ApiTestBase {
                         (Function<Long, DishRequest>) productId -> TestDataFactory.dishWithServingSize(productId, "0")
                 ),
                 Arguments.of(
+                        "negative serving size near boundary",
+                        (Function<Long, DishRequest>) productId -> TestDataFactory.dishWithServingSize(productId, "-0.1")
+                ),
+                Arguments.of(
                         "zero ingredient quantity boundary",
                         (Function<Long, DishRequest>) productId -> TestDataFactory.dishWithIngredientQuantity(productId, "0")
                 ),
