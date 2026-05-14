@@ -11,7 +11,7 @@ import { useUploadPhotosMutation } from '@/shared/api/uploadApi';
 
 export function DishCreatePage() {
     const navigate = useNavigate();
-    const { data: productsData, isLoading: isProductsLoading, error: productsError } = useGetProductsQuery({ size: 100, sortBy: 'name', direction: 'ASC' });
+    const { data: productsData, isLoading: isProductsLoading, error: productsError } = useGetProductsQuery({ size: 1000, sortBy: 'name', direction: 'ASC' });
     const [createDish, { isLoading: isSaving }] = useCreateDishMutation();
     const [calculateNutrition, { isLoading: isCalculating }] = useCalculateDishNutritionMutation();
     const [uploadPhotos, { isLoading: isUploadingPhotos }] = useUploadPhotosMutation();

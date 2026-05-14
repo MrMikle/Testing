@@ -14,7 +14,7 @@ export function DishEditPage() {
     const { id } = useParams();
     const dishId = Number(id);
     const { data: dish, isLoading: isDishLoading, error: dishError } = useGetDishQuery(dishId, { skip: !dishId });
-    const { data: productsData, isLoading: isProductsLoading, error: productsError } = useGetProductsQuery({ size: 100, sortBy: 'name', direction: 'ASC' });
+    const { data: productsData, isLoading: isProductsLoading, error: productsError } = useGetProductsQuery({ size: 1000, sortBy: 'name', direction: 'ASC' });
     const [updateDish, { isLoading: isSaving }] = useUpdateDishMutation();
     const [calculateNutrition, { isLoading: isCalculating }] = useCalculateDishNutritionMutation();
     const [uploadPhotos, { isLoading: isUploadingPhotos }] = useUploadPhotosMutation();
