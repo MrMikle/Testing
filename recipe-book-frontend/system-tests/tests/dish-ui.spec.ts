@@ -5,6 +5,14 @@ import { DishDetailsPage } from '../pages/DishDetailsPage';
 import { DishFormPage } from '../pages/DishFormPage';
 import { DishesPage } from '../pages/DishesPage';
 
+/**
+ * Системные UI-тесты раздела блюд.
+ *
+ * Проверяют создание блюд, расчёт и ручную корректировку КБЖУ,
+ * граничные значения, загрузку фотографий, макросы категорий,
+ * бизнес-правила флагов и редактирование состава через пользовательский интерфейс.
+ */
+
 function withUniqueProductName(product: ProductFormData, name: string): ProductFormData {
     return {
         ...product,
@@ -81,6 +89,9 @@ function dishWithProducts(data: DishFormData, productNames: Record<string, strin
 }
 
 test.describe('Dish UI system tests', () => {
+    /**
+     * Проверяет расчёт КБЖУ по составу и сохранение ручной корректировки.
+     */
     test('calculates nutrition and saves manually corrected nutrition through UI', async ({ page }) => {
         const suffix = Date.now().toString();
         const createdProducts = await createProductsForBorsch(page, suffix);
@@ -120,6 +131,9 @@ test.describe('Dish UI system tests', () => {
         await detailsPage.expectText('Углеводы: 20');
     });
 
+    /**
+     * Проверяет, что форма блюда принимает валидные граничные значения.
+     */
     test('accepts valid boundary values for dish fields', async ({ page }) => {
         const suffix = Date.now().toString();
         const water = withUniqueProductName(products.water, `Вода valid dish boundaries ${suffix}`);
@@ -185,6 +199,9 @@ test.describe('Dish UI system tests', () => {
         }
     });
 
+    /**
+     * Проверяет, что UI не позволяет загрузить больше пяти фотографий блюда.
+     */
     test('does not allow uploading more than five dish photos', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -214,6 +231,9 @@ test.describe('Dish UI system tests', () => {
         await form.expectCannotUploadMoreThanFivePhotos(assetPath('borsch.png'));
     });
 
+    /**
+     * Проверяет, что форма блюда отклоняет базовые невалидные граничные значения.
+     */
     test('rejects invalid boundary values for basic dish fields', async ({ page }) => {
         const suffix = Date.now().toString();
         const water = withUniqueProductName(products.water, `Вода invalid dish boundaries ${suffix}`);
@@ -255,6 +275,9 @@ test.describe('Dish UI system tests', () => {
         }
     });
 
+    /**
+     * Проверяет, что блюдо без ингредиентов не создаётся.
+     */
     test('rejects dish without ingredients', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -271,6 +294,9 @@ test.describe('Dish UI system tests', () => {
         await expect(page.getByRole('heading', { name: 'Создание блюда' })).toBeVisible();
     });
 
+    /**
+     * Проверяет, что форма блюда отклоняет невалидное ручное КБЖУ.
+     */
     test('rejects invalid manual nutrition boundary values for dish', async ({ page }) => {
         const suffix = Date.now().toString();
         const water = withUniqueProductName(products.water, `Вода invalid manual nutrition ${suffix}`);
@@ -339,6 +365,9 @@ test.describe('Dish UI system tests', () => {
         }
     });
 
+    /**
+     * Проверяет автоматическое определение категории блюда по макросу в названии.
+     */
     test('uses macro category when form category is empty', async ({ page }) => {
         const suffix = Date.now().toString();
         const createdProducts = await createProductsForBorsch(page, suffix);
@@ -359,6 +388,9 @@ test.describe('Dish UI system tests', () => {
         await detailsPage.expectName(`Борщ веганский macro UI ${suffix}`);
     });
 
+    /**
+     * Проверяет, что категория из поля формы имеет приоритет над макросом.
+     */
     test('uses form category instead of macro category', async ({ page }) => {
         const suffix = Date.now().toString();
         const createdProducts = await createProductsForBorsch(page, suffix);
@@ -380,6 +412,9 @@ test.describe('Dish UI system tests', () => {
         await detailsPage.expectName(`Борщ form category UI ${suffix}`);
     });
 
+    /**
+     * Проверяет, что блюдо с мясом не может иметь флаг "Веган".
+     */
     test('does not allow vegan flag for dish with meat', async ({ page }) => {
         const suffix = Date.now().toString();
         const meat = withUniqueProductName(products.meat, `Мясо dish flag UI ${suffix}`);
@@ -399,6 +434,9 @@ test.describe('Dish UI system tests', () => {
         await form.expectFlagDisabled('Веган');
     });
 
+    /**
+     * Проверяет автоматическое снятие недоступного флага после изменения состава блюда.
+     */
     test('removes unavailable vegan flag after dish composition update', async ({ page }) => {
         const suffix = Date.now().toString();
         const createdProducts = await createProductsForBorsch(page, suffix);

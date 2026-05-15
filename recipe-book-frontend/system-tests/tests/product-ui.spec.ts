@@ -5,6 +5,14 @@ import { ProductDetailsPage } from '../pages/ProductDetailsPage';
 import { ProductsPage } from '../pages/ProductsPage';
 import { createProductThroughUi } from '../helpers/createEntities';
 
+/**
+ * Системные UI-тесты раздела продуктов.
+ *
+ * Проверяют создание, валидацию, граничные значения, загрузку фотографий,
+ * бизнес-правила флагов, поиск, фильтрацию, сортировку, редактирование
+ * и просмотр карточки продукта через пользовательский интерфейс.
+ */
+
 function withUniqueName(product: ProductFormData, name: string): ProductFormData {
     return {
         ...product,
@@ -28,6 +36,9 @@ function productWithNutrition(name: string, calories: string, proteins: string, 
 }
 
 test.describe('Product UI system tests', () => {
+    /**
+     * Проверяет создание валидных продуктов.
+     */
     test('creates valid products from different equivalence classes', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -49,6 +60,9 @@ test.describe('Product UI system tests', () => {
         await productsPage.expectProductVisible(meat.name);
     });
 
+    /**
+     * Проверяет, что форма продукта принимает валидные граничные значения.
+     */
     test('accepts valid boundary values for product fields', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -84,6 +98,9 @@ test.describe('Product UI system tests', () => {
         }
     });
 
+    /**
+     * Проверяет, что UI не позволяет загрузить больше пяти фотографий продукта.
+     */
     test('does not allow uploading more than five product photos', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -107,6 +124,9 @@ test.describe('Product UI system tests', () => {
         await form.expectCannotUploadMoreThanFivePhotos(assetPath('borsch.png'));
     });
 
+    /**
+     * Проверяет, что форма продукта отклоняет невалидные граничные значения.
+     */
     test('rejects invalid boundary values for product fields', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -137,6 +157,9 @@ test.describe('Product UI system tests', () => {
         }
     });
 
+    /**
+     * Проверяет бизнес-правило: мясной продукт не может иметь флаг "Веган".
+     */
     test('does not allow vegan flag for meat product', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -154,6 +177,9 @@ test.describe('Product UI system tests', () => {
         await form.expectFlagDisabled('Веган');
     });
 
+    /**
+     * Проверяет поиск, фильтрацию и сортировку продуктов через UI.
+     */
     test('filters, searches and sorts products through UI', async ({ page }) => {
         const suffix = Date.now().toString();
 
@@ -208,6 +234,9 @@ test.describe('Product UI system tests', () => {
         await expect(firstCard).toContainText(meat.name);
     });
 
+    /**
+     * Проверяет редактирование продукта и просмотр обновлённых данных в карточке.
+     */
     test('updates product and reads updated product details', async ({ page }) => {
         const suffix = Date.now().toString();
 

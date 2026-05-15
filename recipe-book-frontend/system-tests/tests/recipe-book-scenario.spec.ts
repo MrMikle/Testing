@@ -6,6 +6,15 @@ import { ProductDetailsPage } from '../pages/ProductDetailsPage';
 import { ProductsPage } from '../pages/ProductsPage';
 import { createDishThroughUi, createProductThroughUi } from '../helpers/createEntities';
 
+/**
+ * Сквозной системный UI-сценарий для книги рецептов.
+ *
+ * Проверяет основной пользовательский путь: создание продуктов,
+ * создание обычного и веганского борща, просмотр карточек,
+ * поиск, фильтрацию, запрет удаления используемого продукта
+ * и последующее удаление связанных сущностей.
+ */
+
 function withProductName(product: ProductFormData, name: string): ProductFormData {
     return {
         ...product,
@@ -31,6 +40,9 @@ function replaceIngredientNames(dish: DishFormData, productNames: Record<string,
 }
 
 test.describe('Recipe book UI system scenario', () => {
+    /**
+     * Проверяет полный пользовательский сценарий работы с продуктами и блюдами.
+     */
     test('creates borsch and vegan borsch, checks filters and deletion rules', async ({ page }) => {
         const suffix = Date.now().toString();
 

@@ -1,5 +1,12 @@
 import { expect, Page } from '@playwright/test';
 
+/**
+ * Page Object для карточки блюда.
+ *
+ * Содержит проверки отображения данных блюда, состава, фотографий
+ * и действия перехода к редактированию или удалению.
+ */
+
 export class DishDetailsPage {
     constructor(public readonly page: Page) {}
 

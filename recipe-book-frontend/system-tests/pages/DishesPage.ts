@@ -1,5 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
 
+/**
+ * Page Object для страницы списка блюд.
+ *
+ * Содержит действия со списком блюд: открытие страницы, поиск,
+ * фильтрацию, переход к созданию, просмотру, редактированию
+ * и удалению блюда.
+ */
+
 export class DishesPage {
     constructor(public readonly page: Page) {}
 

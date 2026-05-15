@@ -1,5 +1,12 @@
 import { expect, Page } from '@playwright/test';
 
+/**
+ * Page Object для общей навигации приложения.
+ *
+ * Содержит действия, которые не относятся к конкретной сущности:
+ * переход на главную страницу, в раздел продуктов и в раздел блюд.
+ */
+
 export class AppLayout {
     constructor(public readonly page: Page) {}
 

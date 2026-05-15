@@ -7,6 +7,13 @@ import { ProductDetailsPage } from '../pages/ProductDetailsPage';
 import { ProductFormPage } from '../pages/ProductFormPage';
 import { ProductsPage } from '../pages/ProductsPage';
 
+/**
+ * Общие вспомогательные сценарии для создания сущностей через UI.
+ *
+ * Helpers используются в разных spec-файлах, чтобы не дублировать шаги создания
+ * продуктов и блюд через пользовательский интерфейс.
+ */
+
 export function expectedDishName(name: string) {
     return name.replace(/^!\S+\s+/, '');
 }

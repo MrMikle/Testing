@@ -1,6 +1,13 @@
 import { expect, Page } from '@playwright/test';
 import { ProductFormData } from '../fixtures/testData';
 
+/**
+ * Page Object для формы создания и редактирования продукта.
+ *
+ * Содержит методы заполнения полей продукта, загрузки фотографий,
+ * выбора флагов и сохранения формы.
+ */
+
 export class ProductFormPage {
     constructor(public readonly page: Page) {}
 

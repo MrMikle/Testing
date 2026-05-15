@@ -1,5 +1,12 @@
 import { expect, Page } from '@playwright/test';
 
+/**
+ * Page Object для карточки продукта.
+ *
+ * Содержит проверки отображения данных продукта и действия
+ * перехода к редактированию или удалению.
+ */
+
 export class ProductDetailsPage {
     constructor(public readonly page: Page) {}
 

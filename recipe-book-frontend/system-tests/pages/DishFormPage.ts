@@ -1,6 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { DishFormData } from '../fixtures/testData';
 
+/**
+ * Page Object для формы создания и редактирования блюда.
+ *
+ * Содержит методы заполнения названия, категории, размера порции,
+ * состава блюда, ручного КБЖУ, фотографий и дополнительных флагов.
+ */
+
 export class DishFormPage {
     constructor(public readonly page: Page) {}
 

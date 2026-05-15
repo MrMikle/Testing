@@ -1,5 +1,13 @@
 import { expect, Locator, Page } from '@playwright/test';
 
+/**
+ * Page Object для страницы списка продуктов.
+ *
+ * Содержит действия со списком продуктов: открытие страницы, поиск,
+ * фильтрацию, сортировку, переход к созданию, просмотру, редактированию
+ * и удалению продукта.
+ */
+
 export class ProductsPage {
     constructor(public readonly page: Page) {}
 
