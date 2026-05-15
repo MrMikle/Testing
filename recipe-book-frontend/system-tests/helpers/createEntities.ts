@@ -15,7 +15,7 @@ import { ProductsPage } from '../pages/ProductsPage';
  */
 
 export function expectedDishName(name: string) {
-    return name.replace(/^!\S+\s+/, '');
+    return name.replace(/^(!\S+\s+)+/, '');
 }
 
 export async function createProductThroughUi(page: Page, data: ProductFormData) {

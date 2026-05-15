@@ -389,6 +389,30 @@ test.describe('Dish UI system tests', () => {
     });
 
     /**
+     * Проверяет, что при нескольких макросах применяется только первый,
+     * а из названия удаляются все указанные макросы.
+     */
+    test('uses only first macro and removes all macros from dish name', async ({ page }) => {
+        const suffix = Date.now().toString();
+        const createdProducts = await createProductsForBorsch(page, suffix);
+
+        const dish = withUniqueDishData(
+            dishWithProducts(dishes.veganBorsch, {
+                Картофель: createdProducts.potato.name,
+                Свёкла: createdProducts.beet.name,
+                Вода: createdProducts.water.name
+            }),
+            `!суп !десерт Борщ несколько макросов UI ${suffix}`
+        );
+
+        await createDishThroughUi(page, dish);
+
+        const detailsPage = new DishDetailsPage(page);
+        await detailsPage.expectText('Суп');
+        await detailsPage.expectName(`Борщ несколько макросов UI ${suffix}`);
+    });
+
+    /**
      * Проверяет, что категория из поля формы имеет приоритет над макросом.
      */
     test('uses form category instead of macro category', async ({ page }) => {
