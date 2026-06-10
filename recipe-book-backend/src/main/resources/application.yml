@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/checkpoint2_db
     username: postgres
-    password: postgres
+    password: MrMikle228
     driver-class-name: org.postgresql.Driver
 
   jpa:
