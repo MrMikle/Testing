@@ -1,5 +1,11 @@
 recipe-book-frontend/node_modules/
 recipe-book-frontend/dist/
+recipe-book-frontend/.vite/
+recipe-book-frontend/playwright-report/
+recipe-book-frontend/test-results/
+
 recipe-book-backend/target/
 recipe-book-backend/.idea/
+recipe-book-backend/uploads/
+
 .git/

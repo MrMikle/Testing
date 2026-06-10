@@ -3,14 +3,11 @@ rules:
     message: "Hardcoded database password in Spring configuration. Move password to environment variables or secrets."
     severity: ERROR
     languages:
-      - yaml
-    patterns:
-      - pattern: |
-          password: $PASSWORD
+      - generic
+    pattern-regex: '(?i)^\s*password:\s*(?!\$\{)[^#\s]+'
     paths:
       include:
-        - "recipe-book-backend/src/main/resources/application.yml"
-        - "recipe-book-backend/docker-compose.yml"
+        - "/recipe-book-backend/src/main/resources/application.yml"
     metadata:
       category: security
       owasp: "A04:2025 Cryptographic Failures"
@@ -20,13 +17,11 @@ rules:
     message: "Hardcoded POSTGRES_PASSWORD in docker-compose.yml. Use .env or GitHub Secrets instead."
     severity: ERROR
     languages:
-      - yaml
-    patterns:
-      - pattern: |
-          POSTGRES_PASSWORD: $PASSWORD
+      - generic
+    pattern-regex: '^\s*POSTGRES_PASSWORD:\s*(?!\$\{)[^#\s]+'
     paths:
       include:
-        - "recipe-book-backend/docker-compose.yml"
+        - "/recipe-book-backend/docker-compose.yml"
     metadata:
       category: security
       owasp: "A04:2025 Cryptographic Failures"
@@ -36,32 +31,25 @@ rules:
     message: "File upload validation relies on client-controlled Content-Type. Validate real file content instead."
     severity: WARNING
     languages:
-      - java
-    patterns:
-      - pattern-inside: |
-          private String storePhoto(MultipartFile $FILE) {
-            ...
-          }
-      - pattern: |
-          $FILE.getContentType()
+      - generic
+    pattern-regex: '\.getContentType\s*\('
     paths:
       include:
-        - "recipe-book-backend/src/main/java/**/*.java"
+        - "/recipe-book-backend/src/main/java/**/*.java"
     metadata:
       category: security
-      owasp: "A05:2025 Injection"
+      owasp: "A02:2025 Security Misconfiguration"
       cwe: "CWE-434"
 
   - id: spring-cors-wildcard-headers
     message: "CORS allows all request headers. Restrict allowedHeaders to only required headers."
     severity: INFO
     languages:
-      - java
-    pattern: |
-      .allowedHeaders("*")
+      - generic
+    pattern-regex: '\.allowedHeaders\s*\(\s*"\*"\s*\)'
     paths:
       include:
-        - "recipe-book-backend/src/main/java/**/*.java"
+        - "/recipe-book-backend/src/main/java/**/*.java"
     metadata:
       category: security
       owasp: "A02:2025 Security Misconfiguration"

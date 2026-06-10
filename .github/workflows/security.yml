@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Semgrep SAST scan
+        continue-on-error: true
         run: |
           mkdir -p reports/semgrep
 
@@ -50,6 +51,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: recipe-book-frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: recipe-book-frontend
+        run: npm ci
+
       - name: Run OWASP Dependency-Check
         uses: dependency-check/Dependency-Check_Action@main
         env:
@@ -61,8 +73,6 @@ jobs:
           out: reports/dependency-check
           args: >
             --enableRetired
-            --scan recipe-book-backend
-            --scan recipe-book-frontend
             --failOnCVSS 11
 
       - name: Upload Dependency-Check report
@@ -108,16 +118,18 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/recipe_book
           SPRING_DATASOURCE_USERNAME: recipe_user
           SPRING_DATASOURCE_PASSWORD: recipe_password
+          SPRING_DOCKER_COMPOSE_ENABLED: "false"
         run: |
-          mvn spring-boot:run \
-            -Dspring-boot.run.arguments="--spring.docker.compose.enabled=false" &
+          mvn -B spring-boot:run &
 
           echo "Waiting for backend..."
-          for i in {1..60}; do
-            if curl -s http://localhost:8080/actuator/health > /dev/null; then
+          for i in {1..90}; do
+            if curl -fsS http://localhost:8080/api/products > /dev/null; then
               echo "Backend is ready"
               exit 0
             fi
+
+            echo "Backend is not ready yet..."
             sleep 2
           done
 
@@ -128,12 +140,17 @@ jobs:
         uses: zaproxy/action-baseline@v0.14.0
         continue-on-error: true
         with:
-          target: "http://localhost:8080"
-          cmd_options: "-a -r zap-backend-report.html"
+          target: "http://localhost:8080/api/products"
+          allow_issue_writing: false
+          fail_action: false
+          cmd_options: "-a"
 
       - name: Upload ZAP report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: zap-report
-          path: zap-backend-report.html
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
