@@ -3,9 +3,9 @@ spring:
     name: recipe-book-backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/checkpoint2_db
-    username: postgres
-    password: MrMikle228
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/checkpoint2_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:

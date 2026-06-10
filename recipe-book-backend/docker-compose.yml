@@ -5,9 +5,9 @@ services:
     environment:
       POSTGRES_DB: recipe_book
       POSTGRES_USER: recipe_user
-      POSTGRES_PASSWORD: recipe_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - recipe_book_pgdata:/var/lib/postgresql/data
 

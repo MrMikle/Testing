@@ -7,12 +7,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,13 +58,8 @@ public class FileUploadController {
             throw new BusinessRuleException("Photo file must not be empty");
         }
 
-        String contentType = file.getContentType();
-
-        if (contentType == null || !contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
-            throw new BusinessRuleException("Only image files are allowed");
-        }
-
-        String fileName = UUID.randomUUID() + resolveExtension(file.getOriginalFilename(), contentType);
+        String extension = detectImageExtension(file);
+        String fileName = UUID.randomUUID() + extension;
         Path destination = uploadPath.resolve(fileName).normalize();
 
         if (!destination.startsWith(uploadPath)) {
@@ -79,23 +77,41 @@ public class FileUploadController {
         return baseUrl + "/uploads/photos/" + fileName;
     }
 
-    private String resolveExtension(String originalFileName, String contentType) {
-        String safeFileName = originalFileName == null ? "" : StringUtils.cleanPath(originalFileName);
-        int dotIndex = safeFileName.lastIndexOf('.');
-
-        if (dotIndex >= 0 && dotIndex < safeFileName.length() - 1) {
-            String extension = safeFileName.substring(dotIndex).toLowerCase(Locale.ROOT);
-
-            if (extension.matches("\\.(jpg|jpeg|png|gif|webp)")) {
-                return extension;
+    private String detectImageExtension(MultipartFile file) {
+        try (
+                InputStream inputStream = file.getInputStream();
+                ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream)
+        ) {
+            if (imageInputStream == null) {
+                throw new BusinessRuleException("Only image files are allowed");
             }
-        }
 
-        return switch (contentType.toLowerCase(Locale.ROOT)) {
-            case "image/png" -> ".png";
-            case "image/gif" -> ".gif";
-            case "image/webp" -> ".webp";
-            default -> ".jpg";
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(imageInputStream);
+
+            if (!readers.hasNext()) {
+                throw new BusinessRuleException("Only image files are allowed");
+            }
+
+            ImageReader reader = readers.next();
+
+            try {
+                String formatName = reader.getFormatName().toLowerCase(Locale.ROOT);
+                return resolveExtensionByFormat(formatName);
+            } finally {
+                reader.dispose();
+            }
+        } catch (IOException exception) {
+            throw new BusinessRuleException("Could not validate photo file");
+        }
+    }
+
+    private String resolveExtensionByFormat(String formatName) {
+        return switch (formatName) {
+            case "jpeg", "jpg" -> ".jpg";
+            case "png" -> ".png";
+            case "gif" -> ".gif";
+            case "webp" -> ".webp";
+            default -> throw new BusinessRuleException("Unsupported image format");
         };
     }
 }
