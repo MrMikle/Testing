@@ -1,0 +1,139 @@
+name: Security checks
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sast-semgrep:
+    name: SAST - Semgrep
+    runs-on: ubuntu-latest
+
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep SAST scan
+        run: |
+          mkdir -p reports/semgrep
+
+          semgrep scan \
+            --config p/secrets \
+            --config p/owasp-top-ten \
+            --config .semgrep.yml \
+            --json \
+            --output reports/semgrep/semgrep-report.json \
+            .
+
+      - name: Upload Semgrep report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: semgrep-report
+          path: reports/semgrep/
+
+  sca-dependency-check:
+    name: SCA - OWASP Dependency-Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
+        with:
+          project: recipe-book
+          path: .
+          format: HTML
+          out: reports/dependency-check
+          args: >
+            --enableRetired
+            --scan recipe-book-backend
+            --scan recipe-book-frontend
+            --failOnCVSS 11
+
+      - name: Upload Dependency-Check report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: reports/dependency-check/
+
+  dast-zap:
+    name: DAST - OWASP ZAP
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: recipe_book
+          POSTGRES_USER: recipe_user
+          POSTGRES_PASSWORD: recipe_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U recipe_user -d recipe_book"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Start backend
+        working-directory: recipe-book-backend
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/recipe_book
+          SPRING_DATASOURCE_USERNAME: recipe_user
+          SPRING_DATASOURCE_PASSWORD: recipe_password
+        run: |
+          mvn spring-boot:run \
+            -Dspring-boot.run.arguments="--spring.docker.compose.enabled=false" &
+
+          echo "Waiting for backend..."
+          for i in {1..60}; do
+            if curl -s http://localhost:8080/actuator/health > /dev/null; then
+              echo "Backend is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Backend did not start"
+          exit 1
+
+      - name: Run OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.14.0
+        continue-on-error: true
+        with:
+          target: "http://localhost:8080"
+          cmd_options: "-a -r zap-backend-report.html"
+
+      - name: Upload ZAP report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-report
+          path: zap-backend-report.html

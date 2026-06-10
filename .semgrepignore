@@ -1,0 +1,5 @@
+recipe-book-frontend/node_modules/
+recipe-book-frontend/dist/
+recipe-book-backend/target/
+recipe-book-backend/.idea/
+.git/
